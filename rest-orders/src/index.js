@@ -3,11 +3,22 @@ const { readFileSync } = require("fs");
 const { ApolloServer } = require("@apollo/server");
 const { buildSubgraphSchema } = require("@apollo/subgraph");
 const { startStandaloneServer } = require("@apollo/server/standalone");
+const { url } = await startStandaloneServer(server, {
+  context: async ({ req }) => ({
+    dataSources: {
+      ordersAPI: new OrdersAPI()
+    }
+  }),
+  listen: { port },
+});
+
 
 const resolvers = require("./resolvers");
 const OrdersAPI = require("./datasources/orders-api");
 const port = process.env.PORT ?? 4002;
 const subgraphName = require("../package.json").name;
+
+
 
 async function main() {
   const typeDefs = gql(
